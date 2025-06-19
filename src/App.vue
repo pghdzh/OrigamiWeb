@@ -18,8 +18,7 @@ import NavBar from './components/NavBar.vue'
 #app {
   font-family: 'PingFang SC', 'Helvetica Neue', sans-serif;
   color: #fff;
-  background: #0e0e0e;
-  min-height: 100vh;
+
 }
 
 

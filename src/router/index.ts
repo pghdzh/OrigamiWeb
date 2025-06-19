@@ -15,6 +15,10 @@ const router = createRouter({
       path: "/overview",
       component: () => import("@/views/overView/index.vue"),
     },
+    {
+      path: "/timeline",
+      component: () => import("@/views/timelineView/index.vue"),
+    },
   ],
   scrollBehavior() {
     return { top: 0 };
