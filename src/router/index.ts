@@ -11,7 +11,10 @@ const router = createRouter({
       name: "starView",
       component: () => import("@/views/starView/index.vue"),
     },
-   
+    {
+      path: "/overview",
+      component: () => import("@/views/overView/index.vue"),
+    },
   ],
   scrollBehavior() {
     return { top: 0 };

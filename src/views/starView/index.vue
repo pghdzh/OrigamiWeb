@@ -1,129 +1,179 @@
 <template>
   <div class="home-container">
-    <div class="typing">
-      <!-- 标题也用打字机效果 -->
-      <h1 class="title">{{ displayTitle }}</h1>
+    <!-- 粒子背景 -->
+    <div id="particles-js" class="particles-canvas"></div>
 
-      <!-- 循环显示的名言，带打字与滑动过渡 -->
-      <transition name="slide-fade" mode="out-in">
-        <h2 key="quote-{{ quoteIndex }}" class="quote">
-          {{ displayQuote }}
-        </h2>
-      </transition>
+    <!-- 文字卡片背景（毛玻璃） -->
+    <div class="text-card">
+      <div class="typing">
+        <h1 class="title">{{ displayTitle }}</h1>
+        <transition name="slide-fade" mode="out-in">
+          <h2 :key="`quote-${quoteIndex}`" class="quote">{{ displayQuote }}</h2>
+        </transition>
+      </div>
     </div>
+
     <footer class="footer">© 2025 鸢一折纸 电子设定集</footer>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted } from 'vue'
 
-// 要打字的完整文本
-const fullTitle = "鸢一折纸";
+const fullTitle = '鸢一折纸'
 const quotes = [
-  "“你曾在我身边，拯救了我，让我看到了这个世界的美好。”",
-  "“折纸虽脆弱，却能被双手赋予无限可能。”",
-  "“哪怕千疮百孔，我也要挺立于风中。”",
-];
+  '仇恨是唯一不会背叛我的武器——直到遇见你。',
+  '体温36.5℃，心率82——今日的士道，依然完美。',
+  '王冠承载绝灭之光，丧服缠绕救赎之暗——这具躯壳里，住着两个‘我’。',
+  '扣动扳机那刻，我才明白：最该消灭的精灵，是我自己。',
+  '过去的折纸会杀死你，现在的折纸……想为你泡一杯茶。',
+  '仇恨的灰烬里，终于开出了名为‘爱’的花。',
+]
 
-// 打字机展示用的 ref
-const displayTitle = ref("");
-const displayQuote = ref("");
-const quoteIndex = ref(0);
+const displayTitle = ref('')
+const displayQuote = ref('')
+const quoteIndex = ref(0)
 
-// 打字机函数，返回 Promise 以便串联
 function typeText(
   full: string,
   target: typeof displayTitle | typeof displayQuote,
   speed = 150
 ) {
   return new Promise<void>((resolve) => {
-    target.value = "";
-    let i = 0;
+    target.value = ''
+    let i = 0
     const timer = setInterval(() => {
-      target.value += full[i++];
+      target.value += full[i++]
       if (i >= full.length) {
-        clearInterval(timer);
-        resolve();
+        clearInterval(timer)
+        resolve()
       }
-    }, speed);
-  });
+    }, speed)
+  })
 }
 
-// 轮播名言：打字→停留→滑出→下一条
 async function cycleQuotes() {
   while (true) {
-    const text = quotes[quoteIndex.value];
-    await typeText(text, displayQuote, 100);
-    await new Promise((r) => setTimeout(r, 1500)); // 显示停留
-    displayQuote.value = ""; // 清空触发滑出
-    await new Promise((r) => setTimeout(r, 500)); // 等待滑出过渡
-    quoteIndex.value = (quoteIndex.value + 1) % quotes.length;
+    await typeText(quotes[quoteIndex.value], displayQuote, 100)
+    await new Promise((r) => setTimeout(r, 1500))
+    displayQuote.value = ''
+    await new Promise((r) => setTimeout(r, 500))
+    quoteIndex.value = (quoteIndex.value + 1) % quotes.length
   }
 }
 
 onMounted(async () => {
-  // 先打标题
-  await typeText(fullTitle, displayTitle, 200);
-  // 标题完成后小停，再启动名言循环
-  setTimeout(() => cycleQuotes(), 500);
-});
+  /* global particlesJS */
+  particlesJS('particles-js', {
+    particles: {
+      number: { value: 80, density: { enable: true, value_area: 1000 } },
+      color: { value: ['#ff9a9e', '#fad0c4', '#fad0c4'] },
+      shape: { type: 'star' },
+      opacity: { value: 0.7, random: true },
+      size: { value: 4, random: true },
+      move: { enable: true, speed: 0.5, direction: 'none', out_mode: 'out' }
+    },
+    interactivity: {
+      detect_on: 'canvas',
+      events: {
+        onhover: { enable: true, mode: 'repulse' },
+        onclick: { enable: true, mode: 'push' }
+      },
+      modes: {
+        repulse: { distance: 100, duration: 0.4 },
+        push: { particles_nb: 4 }
+      }
+    },
+    retina_detect: true
+  })
+
+  await typeText(fullTitle, displayTitle, 180)
+  setTimeout(() => cycleQuotes(), 400)
+})
 </script>
 
 <style scoped lang="scss">
 .home-container {
   position: relative;
   height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start; /* 改为靠上 */
-  padding-top: 30vh; /* 顶部留白，可根据喜好调整 */
-  background-color: #fcebf6;
-  text-align: center;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+  background: linear-gradient(145deg, #3b1054 0%, #780206 100%);
+}
+
+.particles-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.text-card {
+  position: relative;
+  z-index: 1;
+  max-width: 75%;
+  padding: 2.5rem;
 }
 
 .typing {
+  text-align: center;
+
   .title {
-    font-size: 3rem;
-    margin: 0 0 1rem;
-    color: #333;
+    font-family: 'Sawarabi Mincho', serif;
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    color: #fbe4fd;
+    letter-spacing: 0.1em;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   }
+
   .quote {
-    font-size: 1.25rem;
-    margin: 0;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.6rem;
     font-style: italic;
-    color: #555;
+    color: #ffe4f1;
+    line-height: 1.8;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    height: 50px;
   }
 }
 
-/* 名言滑入滑出过渡 */
 .slide-fade-enter-active,
 .slide-fade-leave-active {
-  transition: all 0.5s ease;
+  transition: opacity 0.6s ease, transform 0.6s ease;
 }
+
 .slide-fade-enter-from {
   opacity: 0;
-  transform: translateX(100%);
+  transform: translateY(30px);
 }
+
 .slide-fade-enter-to {
   opacity: 1;
-  transform: translateX(0);
+  transform: translateY(0);
 }
+
 .slide-fade-leave-from {
   opacity: 1;
-  transform: translateX(0);
+  transform: translateY(0);
 }
+
 .slide-fade-leave-to {
   opacity: 0;
-  transform: translateX(-100%);
+  transform: translateY(-30px);
 }
 
 .footer {
   position: absolute;
-  bottom: 1rem;
-  font-size: 0.875rem;
-  color: rgba(0, 0, 0, 0.6);
+  bottom: 1.5rem;
+  z-index: 1;
+  color: rgba(255, 228, 241, 0.7);
+  font-size: 0.9rem;
 }
 </style>
