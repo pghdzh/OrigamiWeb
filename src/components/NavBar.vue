@@ -5,8 +5,12 @@
 
       <nav class="nav-links" v-if="!isMobile">
         <ul>
-          <li v-for="link in links" :key="link.path" :class="{ active: route.path === link.path }"
-            @click="go(link.path)">
+          <li
+            v-for="link in links"
+            :key="link.path"
+            :class="{ active: route.path === link.path }"
+            @click="go(link.path)"
+          >
             {{ link.name }}
             <span class="underline" />
           </li>
@@ -21,8 +25,12 @@
         <div class="drawer-content">
           <div class="close-btn" @click="drawerOpen = false">✕</div>
           <ul>
-            <li v-for="link in links" :key="link.path" :class="{ active: route.path === link.path }"
-              @click="go(link.path)">
+            <li
+              v-for="link in links"
+              :key="link.path"
+              :class="{ active: route.path === link.path }"
+              @click="go(link.path)"
+            >
               {{ link.name }}
             </li>
           </ul>
@@ -36,70 +44,72 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { ref, onMounted, computed, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
-const route = useRoute()
-const router = useRouter()
+const route = useRoute();
+const router = useRouter();
 const links = ref([
-  { name: '首页', path: '/' },
-  { name: '角色概览', path: '/overview' },
-  { name: '图库', path: '/gallery' },
-  { name: '时间线', path: '/timeline' },
-  { name: '留言板', path: '/board' },
-  { name: '对话折纸', path: '/talk' }
-])
-const drawerOpen = ref(false)
-const isMobile = ref(window.innerWidth <= 768)
-const canvas = ref<HTMLCanvasElement | null>(null)
+  { name: "首页", path: "/" },
+  { name: "角色概览", path: "/overview" },
+  { name: "图库", path: "/gallery" },
+  { name: "时间线", path: "/timeline" },
+  { name: "留言板", path: "/board" },
+  { name: "对话折纸", path: "/talk" },
+]);
+const drawerOpen = ref(false);
+const isMobile = ref(window.innerWidth <= 768);
+const canvas = ref<HTMLCanvasElement | null>(null);
 
 function checkScreen() {
-  isMobile.value = window.innerWidth <= 768
+  isMobile.value = window.innerWidth <= 768;
 }
-window.addEventListener('resize', checkScreen)
+window.addEventListener("resize", checkScreen);
 
 function go(path: string) {
-  drawerOpen.value = false
-  router.push(path)
+  drawerOpen.value = false;
+  router.push(path);
 }
 
-const isReversed = computed(() => route.path === '/talk')
+const isReversed = computed(() => route.path === "/talk");
 
 // 粒子背景初始化
 onMounted(() => {
   if (canvas.value) {
-    const ctx = canvas.value.getContext('2d')!
-    let particles: any[] = []
+    const ctx = canvas.value.getContext("2d")!;
+    let particles: any[] = [];
     const init = () => {
-      canvas.value!.width = window.innerWidth
-      canvas.value!.height = window.innerHeight
+      canvas.value!.width = window.innerWidth;
+      canvas.value!.height = window.innerHeight;
       particles = Array.from({ length: 50 }, () => ({
         x: Math.random() * canvas.value!.width,
         y: Math.random() * canvas.value!.height,
         r: Math.random() * 2 + 1,
         dx: (Math.random() - 0.5) * 0.5,
         dy: (Math.random() - 0.5) * 0.5,
-      }))
-    }
+      }));
+    };
     const draw = () => {
-      ctx.clearRect(0, 0, canvas.value!.width, canvas.value!.height)
-      ctx.fillStyle = isReversed.value ? 'rgba(160,128,255,0.4)' : 'rgba(0,204,255,0.4)'
-      particles.forEach(p => {
-        ctx.beginPath()
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-        ctx.fill()
-        p.x += p.dx
-        p.y += p.dy
-        if (p.x < 0 || p.x > canvas.value!.width) p.dx *= -1
-        if (p.y < 0 || p.y > canvas.value!.height) p.dy *= -1
-      })
-      requestAnimationFrame(draw)
-    }
-    init()
-    draw()
-    window.addEventListener('resize', init)
+      ctx.clearRect(0, 0, canvas.value!.width, canvas.value!.height);
+      ctx.fillStyle = isReversed.value
+        ? "rgba(160,128,255,0.4)"
+        : "rgba(0,204,255,0.4)";
+      particles.forEach((p) => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+        p.x += p.dx;
+        p.y += p.dy;
+        if (p.x < 0 || p.x > canvas.value!.width) p.dx *= -1;
+        if (p.y < 0 || p.y > canvas.value!.height) p.dy *= -1;
+      });
+      requestAnimationFrame(draw);
+    };
+    init();
+    draw();
+    window.addEventListener("resize", init);
   }
-})
+});
 </script>
 
 <style scoped lang="scss">
@@ -136,7 +146,7 @@ onMounted(() => {
 .logo {
   width: 64px;
   height: 64px;
-  background: url('@/assets/icon-wing.png') no-repeat center center;
+  background: url("@/assets/icon-wing.png") no-repeat center center;
   background-size: contain;
 }
 
@@ -192,8 +202,12 @@ onMounted(() => {
 
 .drawer-content {
   position: relative;
+  background: #1a1a1a;
+  padding: 32px 48px;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 204, 255, 0.5);
   text-align: center;
-
+  padding-top: 240px;
   ul {
     padding: 0;
     list-style: none;
@@ -214,11 +228,12 @@ onMounted(() => {
 
 .close-btn {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 220px;
+  right: 16px;
   font-size: 28px;
   color: #cee;
   cursor: pointer;
+  user-select: none;
 }
 
 .fade-enter-active,
