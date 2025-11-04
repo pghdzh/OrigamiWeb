@@ -2,7 +2,7 @@
   <div class="origami-chat-container">
     <header class="chat-header">
       <img
-        src="@/assets/images2/avatar.jpg"
+        src="@/assets/zhezhi.png"
         alt="鸢一折纸"
         class="header-avatar glowing"
       />
